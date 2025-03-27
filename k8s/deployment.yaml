@@ -52,10 +52,3 @@ spec:
             name: my-golang-app-service
             port:
               number: 80
-      - path: /grafana
-        pathType: Prefix
-        backend:
-          service:
-            name: prometheus-grafana
-            port:
-              number: 80
