@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-golang-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-golang-app
+  template:
+    metadata:
+      labels:
+        app: my-golang-app
+    spec:
+      containers:
+      - name: my-golang-app
+        image: docker.io/pstpmn/golang-haxagonal-template:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: "HOST"
+          value: "0.0.0.0:8080"  # Note: This might not be needed—see below
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-golang-app-service
+spec:
+  selector:
+    app: my-golang-app
+  ports:
+  - name: http  # Add this
+    port: 80
+    targetPort: 8080
+  type: NodePort
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-golang-app-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: my-golang-app-service
+            port:
+              number: 80
+      - path: /grafana
+        pathType: Prefix
+        backend:
+          service:
+            name: prometheus-grafana
+            port:
+              number: 80
