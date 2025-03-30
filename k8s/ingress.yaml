@@ -2,9 +2,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: my-golang-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
-  - host: myapp.local
+  - host: "my-golang-app.local" # เปลี่ยนเป็น domain ที่เหมาะสมกับ cluster ของคุณ
     http:
       paths:
       - path: /
